@@ -26,9 +26,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* Dark mode toggle */
+  const themeToggle = document.getElementById('themeToggle');
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem('atomicads-theme');
+  if (savedTheme === 'dark') root.setAttribute('data-theme', 'dark');
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        root.removeAttribute('data-theme');
+        localStorage.setItem('atomicads-theme', 'light');
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('atomicads-theme', 'dark');
+      }
+    });
+  }
+
+  /* FAQ accordion */
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const question = item.querySelector('.faq-question');
+    question.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      item.parentElement.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        question.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  /* Back to top button */
+  const backToTop = document.getElementById('backToTop');
+  if (backToTop) {
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('show', window.scrollY > 500);
+    });
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
   /* Scroll reveal for sections */
   const revealTargets = document.querySelectorAll(
-    '.brand-card, .service-card, .why-card, .result-card, .about-text, .about-stats, .stat-card'
+    '.brand-card, .service-card, .why-card, .result-card, .about-text, .about-stats, .stat-card, .process-step, .timeline-item, .faq-item, .contact-info-card'
   );
   revealTargets.forEach(el => el.classList.add('reveal'));
 
@@ -43,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   revealTargets.forEach(el => revealObserver.observe(el));
 
-  /* Counter animation for About stats */
+  /* Counter animation for stats */
   const counters = document.querySelectorAll('.stat-number');
   const animateCounter = (el) => {
     const target = parseInt(el.dataset.target, 10);
